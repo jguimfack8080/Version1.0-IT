@@ -1,3 +1,3 @@
 #!/bin/bash
-./setupenvironnement.sh
-./deploybackground.sh
+./testscript/setupenvironnement.sh
+./testscript/deploybackground.sh
