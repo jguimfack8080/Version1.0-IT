@@ -1,0 +1,12 @@
+{
+    "testuser": {
+        "original_account_id": "testuser",
+        "hashed_password": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+        "modified_account_id": "cec85b2b-ae3e-5a75-82f3-15997f21a8fc",
+        "registered_keys": {},
+        "key_id": "78E2836C77D3A161E742135AE103FC75E22BF2E1",
+        "challenge_token": "bd42a9fe-440d-4add-9daa-06a0b2b6026d",
+        "pending_key_fingerprint": "78E2836C77D3A161E742135AE103FC75E22BF2E1",
+        "pending_email": "jeunaj3@gmail.com"
+    }
+}

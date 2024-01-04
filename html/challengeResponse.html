@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Challenge Response</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <form id="challengeResponseForm" method="POST">
+            <h1>Respond to Challenge</h1>
+            <div class="input-box">
+                <label for="accountId">Account-ID:</label>
+                <input type="text" id="accountId" name="account-id" >
+            </div>
+            <div class="input-box">
+                <label for="challengeResponse">Challenge Response:</label>
+                <input type="text" id="challengeResponse" name="challenge-response" >
+            </div>
+            <button type="submit" class="btn">Submit Response</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/challengeResponseScript.js"></script>
+</body>
+</html>

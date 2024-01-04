@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrierung</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="wrapper">
+        <form id="registerForm" action="" method="post">
+            <h1>Registrierung</h1>
+            <div class="input-box">
+                <input type="text" id="accountId" name="account-id" placeholder="Account-ID">
+                <i class='bx bxs-user'></i>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Password">
+                <i class='bx bxs-lock-alt'></i>
+            </div>
+            <div class="input-box">
+                <input type="email" name="email-address" placeholder="E-Mail Adresse" >
+                <i class='bx bxs-user'></i>
+            </div>
+            <div class="input-box">
+                <input type="text" name="key-id" placeholder="Key ID">
+                <i class='bx bxs-lock-alt'></i>
+            </div>
+            <div class="input-box">
+                <input type="file" name="pgp-key" accept=".asc" /> <!-- Accepte uniquement les fichiers .asc -->
+                <i class='bx bxs-file'></i>
+            </div>
+            <button type="submit" class="btn">Registrieren</button>
+        </form>
+        
+    </div>
+    <script src="../js/scriptRegister.js"></script>
+        
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ihre Seite</title>
+    <link rel="stylesheet" href="../css/style.css"> <!-- Pfad zu Ihrem CSS-Datei -->
+    <script>
+            if (!sessionStorage.getItem('account-id')) {
+        window.location.href = 'login.html';
+    }
+        function redirectToRegister() {
+            const accountId = sessionStorage.getItem('account-id');
+            if (accountId) {
+                window.location.href = 'register.html?Konto-id=' + encodeURIComponent(accountId);
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+    <script src="../js/logout.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <ul class="nav-links">
+            <li><a href="#">Startseite</a></li>
+            <li><a href="#">Über uns</a></li>
+            <li><a href="#">Dienstleistungen</a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="content">
+            <a href="javascript:redirectToRegister()" class="button-like">Schlüsseln signieren</a>
+        </div>
+    </main>
+</body>
+</html>
