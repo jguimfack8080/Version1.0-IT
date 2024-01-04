@@ -1,23 +1,28 @@
 #!/bin/bash
 
 # Prerequisites
-echo "Installing Prerequisites..."
-sudo apt update
-sudo apt install -y python3 python3-pip python3-venv nginx
+echo "Checking and Installing Prerequisites..."
 
-# Install Python Dependencies
-echo "Installing Python Dependencies..."
+# List of packages to install
+packages=("python3" "python3-pip" "python3-venv" "nginx" "jq")
+
+# Loop through the packages
+for package in "${packages[@]}"; do
+    if dpkg -s $package &> /dev/null; then
+        echo "$package is already installed."
+    else
+        echo "Installing $package..."
+        sudo apt update
+        sudo apt install -y $package
+
+        # Check if the installation was successful
+        if [ $? -eq 0 ]; then
+            echo "$package has been successfully installed."
+        else
+            echo "Failed to install $package. Please check for errors."
+        fi
+    fi
+done
 
 
-# Setting up Virtual Environment
-echo "Setting up Virtual Environment..."
-python3 -m venv App
-source App/bin/activate
-pip install Flask flask_cors gnupg
-
-# Running the Application
-echo "Running the Application..."
-python App/app.py
-
-echo "The application is now running. Access it at http://127.0.0.1:5000/"
 

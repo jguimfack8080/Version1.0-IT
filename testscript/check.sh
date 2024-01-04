@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BASE_URL="http://127.0.0.1:5000"
-USER_DB_FILE="../users_db.json"
+USER_DB_FILE="users_db.json"
 
 # Test des Endpunkts zum Erstellen eines Kontos
 echo "Teste den Endpunkt zum Erstellen eines Kontos..."
