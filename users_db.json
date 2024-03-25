@@ -4,9 +4,11 @@
         "hashed_password": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
         "modified_account_id": "cec85b2b-ae3e-5a75-82f3-15997f21a8fc",
         "registered_keys": {},
-        "key_id": "78E2836C77D3A161E742135AE103FC75E22BF2E1",
-        "challenge_token": "903c532b-32b2-4ad6-aa85-f400263e35ad",
-        "pending_key_fingerprint": "78E2836C77D3A161E742135AE103FC75E22BF2E1",
+        "challenge_token": {
+            "token": "2755ad5c-3510-4276-af59-4223bc5013e7",
+            "expiration_time": "2024-03-25T11:28:40.440389"
+        },
+        "pending_key_fingerprint": "D1463AA8CA97D6F02F64661AA0E9DEC8202C21F9",
         "pending_email": "jeunaj3@gmail.com"
     }
 }
