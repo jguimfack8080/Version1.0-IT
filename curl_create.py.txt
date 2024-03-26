@@ -2,7 +2,7 @@ Create
 curl -X POST -H "Content-Type: application/json" -d '{"account-id": "testuser", "password": "testpassword"}' http://localhost:5000/create
 
 Register
-curl -X POST -F "account-id=testuser" -F "password=testpassword" -F "email-address=jeunaj3@gmail.com" -F "key-id=78E2836C77D3A161E742135AE103FC75E22BF2E1" -F "pgp-key=@./pgp-key.asc" http://localhost:5000/register
+curl -X POST -F "account-id=testuser" -F "password=testpassword" -F "email-address=jeunaj3@gmail.com" -F "key-id=78E2836C77D3A161E742135AE103FC75E22BF2E1" -F "pgp-key=@./pgp-key-for-testing/pgp-key.asc" http://localhost:5000/register
 
 curl -X POST -F "account-id=testuser" -F "challenge-response=f09091f4-8c6a-4d2e-b7cf-3d4deca7c98d" http://localhost:5000/respond_challenge
 
