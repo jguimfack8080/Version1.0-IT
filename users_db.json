@@ -5,10 +5,10 @@
         "modified_account_id": "cec85b2b-ae3e-5a75-82f3-15997f21a8fc",
         "registered_keys": {},
         "challenge_token": {
-            "token": "2755ad5c-3510-4276-af59-4223bc5013e7",
-            "expiration_time": "2024-03-25T11:28:40.440389"
+            "token": "4341d27b-12c5-4c8a-9bf4-ac99e12eb173",
+            "expiration_time": "2024-03-26T14:33:27.702478"
         },
-        "pending_key_fingerprint": "D1463AA8CA97D6F02F64661AA0E9DEC8202C21F9",
+        "pending_key_fingerprint": "6A6A3B685891416D44A615E22C1D055B76B5733E",
         "pending_email": "jeunaj3@gmail.com"
     }
 }

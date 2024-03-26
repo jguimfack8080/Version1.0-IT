@@ -151,6 +151,7 @@ def register_key():
     password = data.get('password')
     email_address = data.get('email-address')
     
+    
     # Récupérer le key ID fourni par l'utilisateur et le formater en supprimant les espaces
     user_key_id = data.get('key-id')
     key_id = user_key_id.replace(" ", "")
@@ -212,9 +213,25 @@ def register_key():
     
     if not encrypted_challenge_email_body.ok:
         return jsonify({'error': 'Fehler beim Verschlüsseln der Challenge-Nachricht'}), 500
-
+    
+    # Construire le nom de fichier avec le format spécifié pour l'enregistrement et l'envoi par e-mail
+    filename = f"{account_id}-{email_address}-{key_id}.asc"
     # Envoyer le fichier PGP en tant que pièce jointe dans l'e-mail
     send_email(email_address, "[ACME-PGP] Register", str(encrypted_challenge_email_body), attachment=pgp_key_file.filename)
+     
+     # Enregistrer le fichier joint dans le répertoire "keys"
+    keys_directory = "keys"
+    if not os.path.exists(keys_directory):
+        os.makedirs(keys_directory)
+
+    public_keys_path = os.path.join(keys_directory, filename)
+
+    # Revenir au début du fichier
+    pgp_key_file.seek(0)
+
+    # Enregistrer le fichier avec son contenu
+    pgp_key_file.save(public_keys_path)
+
 
     # Attendre que le token expire
     while not is_token_expired():

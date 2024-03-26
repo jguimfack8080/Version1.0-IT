@@ -22,7 +22,7 @@ echo
 # Test des Endpunkts zum Registrieren eines Schlüssels
 echo "Teste den Endpunkt zum Registrieren eines Schlüssels..."
 
-curl -X POST -F "account-id=testuser" -F "password=testpassword" -F "email-address=jeunaj3@gmail.com" -F "key-id=D146 3AA8 CA97 D6F0 2F64 661A A0E9 DEC8 202C 21F9" -F "pgp-key=@./pub_jguimfackjeuna@smail.hs-bremerhaven.de-0x2C1D055B76B5733E-pub.asc" "$BASE_URL/register"
+curl -X POST -F "account-id=testuser" -F "password=testpassword" -F "email-address=jeunaj3@gmail.com" -F "key-id=6A6A 3B68 5891 416D 44A6 15E2 2C1D 055B 76B5 733E" -F "pgp-key=@./friend_public_key.asc" "$BASE_URL/register"
 echo
 
 # Extrahiere den challenge_token für "testuser"
