@@ -1,0 +1,32 @@
+{
+    "testuser": {
+        "original_account_id": "testuser",
+        "hashed_password": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+        "modified_account_id": "cec85b2b-ae3e-5a75-82f3-15997f21a8fc",
+        "registered_keys": {},
+        "pending_key_fingerprint": "C42ABE97D36A66A3BE08C90171B0CC609829C312",
+        "pending_email": "jeunaj3@gmail.com",
+        "challenge_token": {
+            "token": "76f3a45d-5cdb-42d5-800f-b15bec25c482",
+            "expiration_time": "2024-03-27T12:10:29.957389"
+        }
+    },
+    "testuser2": {
+        "original_account_id": "testuser2",
+        "hashed_password": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+        "modified_account_id": "6b8099f8-fff0-5e4d-b070-8c1c4946ba16",
+        "registered_keys": {}
+    },
+    "testuser3": {
+        "original_account_id": "testuser3",
+        "hashed_password": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+        "modified_account_id": "88358f66-447b-5200-bc1f-2d6013c9f722",
+        "registered_keys": {}
+    },
+    "testuer4": {
+        "original_account_id": "testuer4",
+        "hashed_password": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+        "modified_account_id": "a62e3dff-587b-5bc7-bfc9-68032143769a",
+        "registered_keys": {}
+    }
+}

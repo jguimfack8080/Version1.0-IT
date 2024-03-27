@@ -44,7 +44,9 @@ for num in messages:
         match = re.search(r'Challenge-token: "(.*?)"', payload)
         if match:
             token_value = match.group(1)
+            sender = re.search(r'<(.*?)>', msg['From']).group(1)  # Extraction de l'adresse e-mail seulement
             print('Token value:', token_value)
+            print('Sender:', sender)  # Afficher l'adresse e-mail de l'expéditeur seulement
             email_trouve = True
             break
 

@@ -44,13 +44,19 @@ def import_public_key(keyfile):
 import subprocess
 import os
 
-def sign_and_export_key(key_id, email_address):
+def sign_and_export_key(key_id, email_address, user_accoun_id):
+    #Mot de passe de macle privee
+    passphrase = "Jordan"
+
     # Créer le répertoire signed_keys s'il n'existe pas
     if not os.path.exists('signed_keys'):
         os.makedirs('signed_keys')
 
+    # Définir la variable d'environnement GPG_AGENT_INFO pour spécifier le chemin de l'agent GPG
+    os.environ['GPG_AGENT_INFO'] = '/usr/bin/gpg-agent'
     # Signer la clé avec la commande gpg --sign-key
-    result_sign = subprocess.run(['gpg', '--sign-key', key_id], capture_output=True, text=True)
+    #result_sign = subprocess.run(['gpg', '--sign-key', key_id], capture_output=True, text=True)
+    result_sign = subprocess.run(['gpg', '--batch', '--passphrase', 'Jordan', '--yes', '--sign-key', key_id], capture_output=True, text=True)
 
     # Vérifier si la signature de la clé a réussi
     if result_sign.returncode == 0:
@@ -65,13 +71,14 @@ def sign_and_export_key(key_id, email_address):
             # Vérifier si l'exportation de la clé signée a réussi
             if result_export.returncode == 0:
                 # Nom du fichier : email_adress-key_id.asc
-                output_file = f'signed_keys/{email_address}-{key_id.replace(" ", "")}.asc'
+                output_file = f'signed_keys/signedKey-{email_address}-{key_id.replace(" ", "")}.asc'
                 # Écrire le résultat dans le fichier de sortie
                 with open(output_file, 'w') as f:
                     f.write(result_export.stdout)
                 print("Le résultat de la clé signée a été exporté dans le fichier", output_file)
                 # Envoyer le fichier par e-mail
-                notification_email_body = "Ihre PGP-Schlüsselregistrierung wurde erfolgreich abgeschlossen. \n\n Im Anhang finden Sie Ihren signierten Schlüssel als Dateianhang"
+                notification_email_body = f"Moin {user_accoun_id},\n\nIhre PGP-Schlüsselregistrierung wurde erfolgreich abgeschlossen. \n\nIm Anhang finden Sie Ihren signierten Schlüssel."
+
                 utils.send_email(email_address, "[ACME-PGP] Registrierung erfolgreich", notification_email_body, attachment=output_file)
             else:
                 print("Une erreur s'est produite lors de l'exportation de la clé signée.")
@@ -133,7 +140,7 @@ def register_key():
 
     # Extraire le key ID de l'empreinte de la clé et le formater
     imported_key_id = fingerprint.upper()
-    import_public_key(f'public_keys_users/{account_id}-{email_address}-{imported_key_id}.asc')
+    import_public_key(f'public_keys_users/{account_id}-{email_address}-{imported_key_id}-pub.asc')
 
     
 
@@ -155,10 +162,10 @@ def register_key():
         return datetime.now() > expiration_time
 
     challenge_token_encrypted = gpg.encrypt(challenge_token['token'], fingerprint)
-
+    print("Voici la valeur du token de l'utilisateur: ", challenge_token['token'])
     # Envoi de l'e-mail avec la pièce jointe
     challenge_email_body = (
-    f"Moin,\n\n"
+    f"Moin {account_id},\n\n"
     f"Wichtig: Ein Teil der Nachricht ist verschlüsselt. Sie müssen die Nachricht mit Ihrem privaten Schlüssel entschlüsseln, um zu bestätigen, dass der öffentliche Schlüssel Ihnen gehört. Dazu benötigen Sie Ihren privaten Schlüssel.\n\n"
     f"Um die Registrierung Ihres PGP-Schlüssels abzuschließen, antworten Sie bitte auf diese E-Mail mit dem Challenge-Token im angegebenen Format.\n\n"
     f"Im Betreff Ihrer E-Mail sollte stehen: 'Re: [ACME-PGP] Response'. Im Text der E-Mail geben Sie bitte folgendes Format ein:\n"
@@ -217,23 +224,32 @@ def register_key():
             
             # Vérifiez si l'e-mail correspond à la réponse à la challenge
             if msg['Subject'] == 'Re: [ACME-PGP] Response':
-                payload = ""
-                for part in msg.walk():
-                    if part.get_content_type() == 'text/plain':
-                        payload += part.get_payload(decode=True).decode()
-                match = re.search(r'Challenge-token: "(.*?)"', payload)
-                if match:
-                    token_value = match.group(1)
-                    # Si le token correspond, envoyez un e-mail de notification et renvoyez une réponse JSON appropriée
-                    if token_value == user_data['challenge_token']['token']:
-                        #Dans la methode suivante, le mail de confirmatiotion est envoye
-                        sign_and_export_key(imported_key_id, email_address)
-                        del user_data['challenge_token']
-                        utils.save_data(users_db)
-                        return jsonify({'message': 'Registration successful. Notification email sent.'}), 200
-                    else:
+                #Extraire l'adresse mail de celui qui a envoye le mail
+                sender_email_for_response = re.search(r'<(.*?)>', msg['From']).group(1)
+
+                print ("La valeur de sender_email_for_response est: ", sender_email_for_response)
+                if sender_email_for_response == email_address:
+                    payload = ""
+                    for part in msg.walk():
+                        if part.get_content_type() == 'text/plain':
+                            payload += part.get_payload(decode=True).decode()
+                    match = re.search(r'Challenge-token: "(.*?)"', payload)
+                    if match:
+                        token_value = match.group(1)
+                        # Si le token correspond, envoyez un e-mail de notification et renvoyez une réponse JSON appropriée
+                        if token_value == user_data['challenge_token']['token']:
+                            #Dans la methode suivante, le mail de confirmatiotion est envoye
+                            sign_and_export_key(imported_key_id, email_address, account_id)
+                            del user_data['challenge_token']
+                            del user_data['pending_key_fingerprint']
+                            del user_data['pending_email']
+                            utils.save_data(users_db)
+                            return jsonify({'message': 'Registration successful. Notification email sent.'}), 200
+                        else:
                         # Si le token ne correspond pas, attendez 1 seconde avant de vérifier à nouveau
-                        time.sleep(1)
+                            time.sleep(1)
+                else:
+                    print ("L'adresse mail de l'expediteur: ", sender_email_for_response, "est differente de l'adresse de register: ", email_address)
         # Fermez la connexion IMAP
     imap.close()
     imap.logout()
@@ -242,6 +258,8 @@ def register_key():
     # et renvoyez une réponse JSON appropriée
     if is_token_expired():
         del user_data['challenge_token']
+        del user_data['pending_key_fingerprint']
+        del user_data['pending_email']
         utils.save_data(users_db)
         return jsonify({'error': 'Votre token n\'est plus valide'}), 400
 
