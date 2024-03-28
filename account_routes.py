@@ -6,6 +6,7 @@ import os
 import gnupg
 from datetime import datetime, timedelta
 import utils
+import re
 
 def create_account():
     users_db = utils.load_data()
@@ -18,6 +19,18 @@ def create_account():
 
     if original_account_id in users_db:
         return jsonify({'error': 'Es existiert schon ein Konto mit diesem Konto-ID'}), 409  # 409 Conflict
+
+    # Überprüfen Sie die Passwortanforderungen
+    if len(password) < 16:
+        return jsonify({'error': 'Das Passwort muss mindestens 16 Zeichen lang sein'}), 400
+    if not re.search(r"[A-Z]", password):
+        return jsonify({'error': 'Das Passwort muss mindestens einen Großbuchstaben enthalten'}), 400
+    if not re.search(r"[a-z]", password):
+        return jsonify({'error': 'Das Passwort muss mindestens einen Kleinbuchstaben enthalten'}), 400
+    if not re.search(r"\d", password):
+        return jsonify({'error': 'Das Passwort muss mindestens eine Zahl enthalten'}), 400
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return jsonify({'error': 'Das Passwort muss mindestens ein Sonderzeichen enthalten'}), 400
 
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
     modified_account_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, original_account_id))

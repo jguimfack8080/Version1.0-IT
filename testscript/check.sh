@@ -6,7 +6,7 @@ USER_DB_FILE="users_db.json"
 
 # Test des Endpunkts zum Erstellen eines Kontos
 echo "Teste den Endpunkt zum Erstellen eines Kontos..."
-curl -X POST -H "Content-Type: application/json" -d '{"account-id": "testuser", "password": "testpassword"}' "$BASE_URL/create"
+curl -X POST -H "Content-Type: application/json" -d '{"account-id": "testuser", "password": "Passworduser-It-@Sicherheit@2024"}' "$BASE_URL/create"
 echo
 
 # Test des Endpunkts zum Auflisten von Konten
@@ -16,13 +16,13 @@ echo
 
 # Test des Anmelde-Endpunkts
 echo "Teste den Anmelde-Endpunkt..."
-curl -X POST -F "account-id=testuser" -F "password=testpassword" "$BASE_URL/login"
+curl -X POST -F "account-id=testuser" -F "password=Passworduser-It-@Sicherheit@2024" "$BASE_URL/login"
 echo
 
 # Test des Endpunkts zum Registrieren eines Schlüssels
 echo "Teste den Endpunkt zum Registrieren eines Schlüssels..."
 
-curl -X POST -F "account-id=testuser2" -F "password=testpassword" -F "email-address=jeunaj3@gmail.com" -F "key-id=C42A BE97 D36A 66A3 BE08 C901 71B0 CC60 9829 C312" -F "pgp-key=@./Jordan Jeuna_jeunaj3@gmail.com-0x71B0CC609829C312-pub.asc" "$BASE_URL/register"
+curl -X POST -F "account-id=testuser" -F "password=Passworduser-It-@Sicherheit@2024" -F "email-address=jeunaj3@gmail.com" -F "key-id=C42A BE97 D36A 66A3 BE08 C901 71B0 CC60 9829 C312" -F "pgp-key=@./Jordan Jeuna_jeunaj3@gmail.com-0x71B0CC609829C312-pub.asc" "$BASE_URL/register"
 echo
 
 # Extrahiere den challenge_token für "testuser"
