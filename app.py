@@ -59,10 +59,10 @@ def sign_and_export_key(public_key_path, user_account_id, email_address, key_Id)
     # Déverrouille la clé privée avec la passphrase
     with my_private_key.unlock(passphrase):
         # Charger la clé publique de votre ami
-        friends_public_key, _ = pgpy.PGPKey.from_file(public_key_path)
+        user_public_key, _ = pgpy.PGPKey.from_file(public_key_path)
 
         # Signer chaque User ID associé à la clé publique de votre ami
-        for user_id in friends_public_key.userids:
+        for user_id in user_public_key.userids:
             # Créer une signature de certification Positive_Cert
             signature = my_private_key.certify(user_id, SignatureType.Positive_Cert)
             # Et attacher la signature au User ID
@@ -70,7 +70,7 @@ def sign_and_export_key(public_key_path, user_account_id, email_address, key_Id)
 
     # Sauvegarder la clé publique signée
     with open(output_path, 'w') as f:
-        f.write(str(friends_public_key))  # Écrit la représentation ASCII armorée de la clé
+        f.write(str(user_public_key))  # Écrit la représentation ASCII armorée de la clé
 
     print(f"La clé publique a été signée et enregistrée dans '{output_path}'")
     # Construire le corps de l'e-mail de notification
