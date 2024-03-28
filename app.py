@@ -7,12 +7,17 @@ import json
 import os
 import time
 import gnupg
-import subprocess
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from smtplib import SMTP
 from datetime import datetime, timedelta
+import imaplib
+import email
+from email import policy
+import re
+import pgpy
+from pgpy.constants import SignatureType
 import utils
 import account_routes
 
@@ -32,63 +37,47 @@ def list_accounts_route():
 @app.route('/login', methods=['POST'])
 def login_accounts_route():
     return account_routes.login()
-import imaplib
-import email
-from email import policy
-import re
-import subprocess
 
-def import_public_key(keyfile):
-    subprocess.run(['gpg', '--import', keyfile])
 
-import subprocess
-import os
+def sign_and_export_key(public_key_path, user_account_id, email_address, key_Id):
+    # Chemins des fichiers de clés
+    private_key_path = 'my-private-key.asc'  # Remplacez par le chemin de votre clé privée
+    output_dir = 'signedKey'  # Répertoire où sera enregistrée la clé publique signée
+    output_path = os.path.join(output_dir, f"signed-key-{user_account_id}-{key_Id}.asc")  
 
-def sign_and_export_key(key_id, email_address, user_accoun_id):
-    #Mot de passe de macle privee
-    passphrase = "Jordan"
+    # Vérifier si le répertoire existe, sinon le créer
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-    # Créer le répertoire signed_keys s'il n'existe pas
-    if not os.path.exists('signed_keys'):
-        os.makedirs('signed_keys')
+    # Charger votre propre clé privée
+    my_private_key, _ = pgpy.PGPKey.from_file(private_key_path)
 
-    # Définir la variable d'environnement GPG_AGENT_INFO pour spécifier le chemin de l'agent GPG
-    os.environ['GPG_AGENT_INFO'] = '/usr/bin/gpg-agent'
-    # Signer la clé avec la commande gpg --sign-key
-    #result_sign = subprocess.run(['gpg', '--sign-key', key_id], capture_output=True, text=True)
-    result_sign = subprocess.run(['gpg', '--batch', '--passphrase', 'Jordan', '--yes', '--sign-key', key_id], capture_output=True, text=True)
+    # Assurez-vous que cette ligne est correcte avec la passphrase de votre clé privée
+    passphrase = 'Jordan'
+    assert my_private_key.is_protected
 
-    # Vérifier si la signature de la clé a réussi
-    if result_sign.returncode == 0:
-        print("La clé a été signée avec succès.")
-        # Valider la signature avec la commande gpg --check-sigs
-        result_check = subprocess.run(['gpg', '--check-sigs', key_id], capture_output=True, text=True)
-        # Vérifier si la validation de la signature a réussi
-        if "sig" in result_check.stdout:
-            print("La signature de la clé a été validée avec succès.")
-            # Exporter la clé signée avec la commande gpg --armor --export
-            result_export = subprocess.run(['gpg', '--armor', '--export', key_id], capture_output=True, text=True)
-            # Vérifier si l'exportation de la clé signée a réussi
-            if result_export.returncode == 0:
-                # Nom du fichier : email_adress-key_id.asc
-                output_file = f'signed_keys/signedKey-{email_address}-{key_id.replace(" ", "")}.asc'
-                # Écrire le résultat dans le fichier de sortie
-                with open(output_file, 'w') as f:
-                    f.write(result_export.stdout)
-                print("Le résultat de la clé signée a été exporté dans le fichier", output_file)
-                # Envoyer le fichier par e-mail
-                notification_email_body = f"Moin {user_accoun_id},\n\nIhre PGP-Schlüsselregistrierung wurde erfolgreich abgeschlossen. \n\nIm Anhang finden Sie Ihren signierten Schlüssel."
+    # Déverrouille la clé privée avec la passphrase
+    with my_private_key.unlock(passphrase):
+        # Charger la clé publique de votre ami
+        friends_public_key, _ = pgpy.PGPKey.from_file(public_key_path)
 
-                utils.send_email(email_address, "[ACME-PGP] Registrierung erfolgreich", notification_email_body, attachment=output_file)
-            else:
-                print("Une erreur s'est produite lors de l'exportation de la clé signée.")
-                print(result_export.stderr)
-        else:
-            print("La signature de la clé n'a pas pu être validée.")
-            print(result_check.stderr)
-    else:
-        print("Une erreur s'est produite lors de la signature de la clé.")
-        print(result_sign.stderr)
+        # Signer chaque User ID associé à la clé publique de votre ami
+        for user_id in friends_public_key.userids:
+            # Créer une signature de certification Positive_Cert
+            signature = my_private_key.certify(user_id, SignatureType.Positive_Cert)
+            # Et attacher la signature au User ID
+            user_id |= signature
+
+    # Sauvegarder la clé publique signée
+    with open(output_path, 'w') as f:
+        f.write(str(friends_public_key))  # Écrit la représentation ASCII armorée de la clé
+
+    print(f"La clé publique a été signée et enregistrée dans '{output_path}'")
+    # Construire le corps de l'e-mail de notification
+    notification_email_body = f"Moin {user_account_id},\n\nIhre PGP-Schlüsselregistrierung wurde erfolgreich abgeschlossen. \n\nIm Anhang finden Sie Ihren signierten Schlüssel. \n\n\n Grüße vom Team-06 (Nelly und Jordan)"
+
+    # Envoi de l'email (remplacer ceci avec votre propre fonction d'envoi d'e-mails)
+    utils.send_email(email_address, "[ACME-PGP] Registrierung erfolgreich", notification_email_body, attachment=output_path)
 
 
 
@@ -140,9 +129,6 @@ def register_key():
 
     # Extraire le key ID de l'empreinte de la clé et le formater
     imported_key_id = fingerprint.upper()
-    import_public_key(f'public_keys_users/{account_id}-{email_address}-{imported_key_id}-pub.asc')
-
-    
 
     print("Key ID extrait de la clé PGP: ", imported_key_id)
     # Vérifier si le key ID correspond à celui fourni par l'utilisateur
@@ -239,7 +225,8 @@ def register_key():
                         # Si le token correspond, envoyez un e-mail de notification et renvoyez une réponse JSON appropriée
                         if token_value == user_data['challenge_token']['token']:
                             #Dans la methode suivante, le mail de confirmatiotion est envoye
-                            sign_and_export_key(imported_key_id, email_address, account_id)
+                            #sign_and_export_key(imported_key_id, email_address, account_id)
+                            sign_and_export_key(public_keys_path, account_id, email_address, imported_key_id)
                             del user_data['challenge_token']
                             del user_data['pending_key_fingerprint']
                             del user_data['pending_email']

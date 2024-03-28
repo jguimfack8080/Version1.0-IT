@@ -32,6 +32,7 @@ Python3
 nginx
 Flask
 gnupg
+PGPy
 A functioning SMTP server
 
 Install Dependencies
@@ -45,7 +46,7 @@ sudo apt install python3-venv
 
 Run the following command to install the required Python libraries:
 ## Install Python dependencies
-pip install flask flask_cors gnupg
+pip install flask flask_cors gnupg PGPy
 
 
 ## Running the Application
@@ -62,8 +63,7 @@ The application exposes several RESTful endpoints:
 POST /create: Create a new user account.
 GET /list: Retrieve a list of all user accounts.
 POST /login: Log in to an existing user account.
-POST /register: Register a PGP key for an account.
-POST /respond_challenge: Respond to the challenge for PGP key registration.
+POST /register: Register a PGP key for an account and sign a key
 
 ## Creating an Account
 To create an account, make a POST request to /create with a JSON payload containing account-id and password
@@ -77,5 +77,3 @@ To log in, make a POST request to /login with account-id and password.
 ## Registering a PGP Key
 For PGP key registration, send a POST request to /register with account-id, password, email-address, key-id, and the PGP key file.
 
-## Responding to a Challenge
-After PGP key registration, respond to the challenge by sending a POST request to /respond_challenge with your account-id and the challenge-response.
