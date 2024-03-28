@@ -5,7 +5,7 @@ source bin/activate
 
 # Install Python Dependencies
 echo "Installing Python Dependencies..."
-pip install Flask flask_cors gnupg
+pip install Flask flask_cors gnupg PGPy
 
 # Running the Application
 echo "Running the Application..."
